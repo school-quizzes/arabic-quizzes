@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مغامرة الاسم المقصور والممدود والمنقوص</title>
+<style>
+:root{--navy:#183153;--blue:#2864a5;--gold:#f4c95d;--cream:#fffaf0;--ink:#203047;--green:#197b58;--red:#b84242}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(145deg,#eaf3ff,#fff8e8);color:var(--ink);min-height:100vh}
+header{background:var(--navy);color:white;padding:22px 18px;text-align:center;border-bottom:6px solid var(--gold)}
+header h1{font-size:clamp(1.35rem,4vw,2rem);margin:0 0 8px} header p{margin:0;color:#e0eafa}
+main{max-width:900px;margin:20px auto;padding:0 14px 32px}
+.panel{background:white;border-radius:20px;padding:clamp(16px,4vw,28px);box-shadow:0 8px 26px #1c355018;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{background:#edf4ff;border-radius:12px;padding:9px 13px;font-weight:bold}
+.progress{height:10px;background:#e7edf5;border-radius:99px;overflow:hidden;margin:14px 0 20px}.bar{height:100%;background:linear-gradient(90deg,#2b7a78,#f4c95d);width:0%;transition:width .25s}
+.tag{display:inline-block;background:#fff0c2;color:#674c00;border-radius:999px;padding:6px 11px;font-size:.9rem;font-weight:bold}
+h2{margin:0 0 14px;color:var(--navy);font-size:1.3rem}
+.question{font-size:clamp(1.15rem,3.6vw,1.55rem);line-height:1.9;font-weight:bold;margin:15px 0}
+.hint{color:#607087;line-height:1.8}
+.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:18px 0}
+button{font:inherit;cursor:pointer;border:0;border-radius:13px;padding:13px 16px;transition:transform .12s,background .12s}
+button:active{transform:scale(.98)}
+.answer{background:#f2f6fb;border:2px solid #e0e8f2;text-align:right;color:var(--ink);min-height:58px;font-weight:bold}
+.answer:hover{border-color:var(--blue);background:#eaf3ff}
+.answer.correct{background:#e2f6ec;border-color:#3aa779;color:#14583e}
+.answer.wrong{background:#fff0ef;border-color:#d66;color:#8d2929}
+.primary{background:var(--blue);color:white;font-weight:bold}.secondary{background:#e8eef6;color:var(--navy);font-weight:bold}
+.feedback{padding:13px 15px;border-radius:12px;line-height:1.8;margin-top:12px}
+.feedback.good{background:#e2f6ec;color:#14583e}.feedback.bad{background:#fff0ef;color:#8d2929}
+.hidden{display:none!important}
+.start-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0}
+.mode{border:2px solid #dce6f2;border-radius:15px;padding:15px;background:#f8fbff;cursor:pointer;text-align:right}
+.mode.selected{border-color:var(--blue);background:#eaf3ff;box-shadow:inset 0 0 0 1px var(--blue)}
+.mode strong{display:block;margin-bottom:5px;color:var(--navy)}
+input[type=text]{font:inherit;padding:12px;border:2px solid #dce6f2;border-radius:12px;width:100%;margin-top:7px}
+footer{text-align:center;color:#64748b;font-size:.9rem;padding:5px 10px 22px}
+.small{font-size:.92rem}
+@media(max-width:480px){.panel{border-radius:15px}.row{align-items:stretch}.row button{width:100%}.stats{width:100%}.stat{flex:1;text-align:center}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗝️ مغامرة الكلمات الثلاث</h1>
+  <p>لعبة تفاعلية للصف التاسع: الاسم المقصور والممدود والمنقوص</p>
+</header>
+<main>
+<section class="panel" id="start">
+  <span class="tag">مهمة النحو</span>
+  <h2 style="margin-top:14px">أهلًا بك في مغامرة النحو!</h2>
+  <p class="hint">اجمع أكبر عدد من النقاط من خلال التمييز بين الأسماء، واستخراجها من الجمل، والإجابة عن أسئلة الإعراب. تعمل اللعبة دون إنترنت بعد تنزيل الملف وفتحه في المتصفح.</p>
+  <label for="student">اسم الطالب/ة (اختياري)</label>
+  <input id="student" type="text" placeholder="اكتب اسمك هنا">
+  <h2 style="margin-top:22px">اختر نمط اللعب</h2>
+  <div class="start-grid">
+    <button class="mode selected" data-mode="mix"><strong>🎲 التحدّي الشامل</strong><span class="small">تمييز + استخراج + إعراب</span></button>
+    <button class="mode" data-mode="classify"><strong>🔎 صيّاد الكلمات</strong><span class="small">هل الكلمة مقصورة أم ممدودة أم منقوصة؟</span></button>
+    <button class="mode" data-mode="extract"><strong>📖 محقّق الجمل</strong><span class="small">استخرج الاسم المطلوب من الجملة</span></button>
+    <button class="mode" data-mode="parse"><strong>✍️ خبير الإعراب</strong><span class="small">اختر الإعراب الصحيح</span></button>
+  </div>
+  <div class="row"><span class="hint">10 أسئلة • نقطة لكل إجابة صحيحة</span><button class="primary" id="begin">ابدأ اللعبة ←</button></div>
+</section>
+
+<section class="panel hidden" id="game">
+  <div class="row">
+    <div class="stats"><span class="stat" id="counter">السؤال 1/10</span><span class="stat" id="score">⭐ النقاط: 0</span></div>
+    <span class="tag" id="modeLabel">التحدّي الشامل</span>
+  </div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="question" id="question"></div>
+  <p class="hint" id="context"></p>
+  <div class="answers" id="answers"></div>
+  <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+  <div class="row" style="margin-top:14px"><span class="hint" id="tip">اقرأ السؤال جيدًا قبل الاختيار.</span><button class="primary hidden" id="next">السؤال التالي ←</button></div>
+</section>
+
+<section class="panel hidden" id="finish">
+  <h2>🏆 انتهت المغامرة!</h2>
+  <p class="question" id="finalScore"></p>
+  <p id="message" class="hint"></p>
+  <div class="panel" style="background:#f7faff;box-shadow:none">
+    <h2>تذكير سريع</h2>
+    <p><strong>الاسم المقصور:</strong> اسم معرب آخره ألف لازمة، مثل: الفتى، الهدى، عصا.</p>
+    <p><strong>الاسم المنقوص:</strong> اسم معرب آخره ياء لازمة مكسور ما قبلها، مثل: القاضي، الراعي.</p>
+    <p><strong>الاسم الممدود:</strong> اسم معرب آخره همزة قبلها ألف زائدة، مثل: صحراء، سماء، بناء.</p>
+    <p class="hint small">انتبه: ليس كل اسم ينتهي بألف أو ياء أو همزة من هذه الأنواع؛ يجب تحقق التعريف. مثل «أبي» ليس اسمًا منقوصًا بالمعنى الصرفي هنا، و«سماء» ممدود.</p>
+  </div>
+  <div class="row"><button class="secondary" id="review">عرض الإجابات الصحيحة</button><button class="primary" id="again">العب مرة أخرى ↻</button></div>
+  <div id="reviewBox" class="hidden" style="margin-top:15px"></div>
+</section>
+</main>
+<footer>صُمّمت للمراجعة الصفية — يمكن فتح الملف مباشرة من جهاز الطالب أو إرفاقه في Microsoft Teams.</footer>
+<script>
+const bank = [
+{type:'classify',q:'ما نوع الاسم «الفتى»؟',ctx:'تذكّر: ننظر إلى آخر الاسم.',a:['اسم مقصور','اسم ممدود','اسم منقوص','ليس من هذه الأنواع'],c:0,e:'الفتى اسم مقصور؛ لأنه اسم معرب آخره ألف لازمة.'},
+{type:'classify',q:'ما نوع الاسم «القاضي»؟',ctx:'الياء في آخره لازمة وما قبلها مكسور.',a:['اسم مقصور','اسم ممدود','اسم منقوص','ليس من هذه الأنواع'],c:2,e:'القاضي اسم منقوص؛ لأنه ينتهي بياء لازمة مكسور ما قبلها.'},
+{type:'classify',q:'ما نوع الاسم «صحراء»؟',ctx:'لاحظ الهمزة التي قبلها ألف.',a:['اسم مقصور','اسم ممدود','اسم منقوص','ليس من هذه الأنواع'],c:1,e:'صحراء اسم ممدود؛ لأنه ينتهي بهمزة قبلها ألف زائدة.'},
+{type:'classify',q:'أيّ الكلمات الآتية ليست اسمًا مقصورًا؟',ctx:'اختر الكلمة التي لا ينطبق عليها التعريف.',a:['العصا','الهدى','مستشفى','الداعي'],c:3,e:'الداعي اسم منقوص، أما العصا والهدى ومستشفى فأسماء مقصورة.'},
+{type:'classify',q:'هل «فتًى» اسم مقصور؟',ctx:'تأمل الألف اللازمة في آخره.',a:['نعم','لا، اسم ممدود','لا، اسم منقوص','لا، فعل'],c:0,e:'نعم، فتى اسم مقصور، وقد تُكتب ألفه المقصورة على صورة ى.'},
+{type:'classify',q:'أيّ الكلمات الآتية اسم ممدود؟',ctx:'ابحث عن همزة قبلها ألف زائدة.',a:['هدى','راعي','بناء','عصا'],c:2,e:'بناء اسم ممدود؛ لأنه ينتهي بهمزة قبلها ألف زائدة.'},
+{type:'classify',q:'كلمة «يد» تُعدّ…',ctx:'ليس كل اسم ينتهي بحرف علة منقوصًا أو مقصورًا.',a:['مقصورًا','ممدودًا','منقوصًا','لا شيء مما سبق'],c:3,e:'يد لا ينطبق عليها تعريف المقصور أو الممدود أو المنقوص.'},
+{type:'classify',q:'ما نوع الاسم «الراعي»؟',ctx:'انظر إلى الياء وحركة الحرف الذي قبلها.',a:['مقصور','ممدود','منقوص','ليس من هذه الأنواع'],c:2,e:'الراعي اسم منقوص؛ الياء لازمة وما قبلها مكسور.'},
+{type:'classify',q:'أيّ الكلمات الآتية اسم مقصور؟',ctx:'اختر اسمًا معربًا آخره ألف لازمة.',a:['القاضي','سماء','المستشفى','معلم'],c:2,e:'المستشفى اسم مقصور؛ آخره ألف لازمة.'},
+{type:'classify',q:'هل «أصدقاء» اسم ممدود؟',ctx:'ما الحرف الذي يسبق الهمزة؟',a:['نعم','لا، مقصور','لا، منقوص','لا، فعل'],c:0,e:'أصدقاء اسم ممدود؛ ينتهي بهمزة قبلها ألف زائدة.'},
+{type:'extract',q:'استخرج الاسم المقصور من الجملة: «سعى الفتى إلى العُلا».',ctx:'اختر الكلمة المطلوبة كما وردت في الجملة.',a:['سعى','الفتى','إلى','العلا'],c:1,e:'الفتى اسم مقصور. «سعى» فعل، و«إلى» حرف جر، و«العلا» أيضًا اسم مقصور؛ والسؤال يقصد الاسم الظاهر الأقرب قبل «إلى».',also:[3]},
+{type:'extract',q:'استخرج الاسم المنقوص: «حضر القاضي إلى المحكمة».',ctx:'ابحث عن اسم آخره ياء لازمة مكسور ما قبلها.',a:['حضر','القاضي','المحكمة','إلى'],c:1,e:'القاضي اسم منقوص، وتظهر الياء في حالة الرفع مع «أل».'},
+{type:'extract',q:'في جملة «تأملتُ سماءَ صافيةً»، ما الاسم الممدود؟',ctx:'اسم ينتهي بهمزة قبلها ألف زائدة.',a:['تأملت','سماء','صافية','التاء'],c:1,e:'سماء اسم ممدود. وهو مفعول به منصوب بالفتحة.'},
+{type:'extract',q:'اختر الاسم المقصور في الجملة: «عاد المسافر إلى مصطفى».',ctx:'انتبه إلى الاسم العلم في نهاية الجملة.',a:['عاد','المسافر','إلى','مصطفى'],c:3,e:'مصطفى اسم مقصور؛ لأنه ينتهي بألف مقصورة لازمة.'},
+{type:'extract',q:'أي كلمة من الجملة «هذا راعٍ أمين» اسم منقوص؟',ctx:'قد تُحذف ياء الاسم المنقوص إذا كان نكرة مرفوعًا أو مجرورًا.',a:['هذا','راعٍ','أمين','لا يوجد'],c:1,e:'راعٍ أصلها «راعي»، وحُذفت الياء لأنه اسم منقوص نكرة مرفوع.'},
+{type:'extract',q:'في «قرأتُ كتابًا عن الصحراء»، حدّد الاسم الممدود.',ctx:'اختر الاسم الذي ينتهي بهمزة قبلها ألف.',a:['قرأت','كتابًا','عن','الصحراء'],c:3,e:'الصحراء اسم ممدود؛ الهمزة مسبوقة بألف.'},
+{type:'extract',q:'أيّ كلمة ليست من الأسماء الثلاثة في الجملة «هذا فتىً يسير في طريق»؟',ctx:'اختر الكلمة التي لا تُعدّ مقصورًا أو ممدودًا أو منقوصًا.',a:['هذا','فتى','يسير','طريق'],c:3,e:'طريق لا ينطبق عليه تعريف الأنواع الثلاثة. «يسير» فعل، و«فتى» مقصور.'},
+{type:'parse',q:'«إنّ الفتى مجتهدٌ». ما إعراب «الفتى»؟',ctx:'تذكّر عمل إنّ وأخواتها.',a:['اسم إنّ منصوب، وعلامة نصبه الفتحة المقدّرة','فاعل مرفوع بالضمة الظاهرة','مبتدأ مرفوع بالضمة الظاهرة','مفعول به منصوب بالفتحة'],c:0,e:'الفتى اسم إنّ منصوب، وعلامة نصبه الفتحة المقدّرة على الألف للتعذّر.'},
+{type:'parse',q:'«جاء القاضي». ما إعراب «القاضي»؟',ctx:'الاسم المنقوص إذا كان معرفًا بـ«أل» تظهر عليه الضمة المقدّرة في الرفع.',a:['فاعل مرفوع بالضمة المقدّرة على الياء للثقل','فاعل مرفوع بالضمة الظاهرة','مفعول به منصوب','اسم مجرور بالكسرة'],c:0,e:'القاضي فاعل مرفوع، وعلامة رفعه الضمة المقدّرة على الياء منع من ظهورها الثقل.'},
+{type:'parse',q:'«رأيتُ الصحراءَ». ما إعراب «الصحراءَ»؟',ctx:'الفعل «رأيتُ» يتعدى إلى مفعول به.',a:['فاعل مرفوع','مفعول به منصوب بالفتحة الظاهرة','اسم مجرور بالكسرة','مبتدأ مرفوع'],c:1,e:'الصحراء مفعول به منصوب وعلامة نصبه الفتحة الظاهرة، والاسم الممدود تُعرب حركاته غالبًا ظاهرة.'},
+{type:'parse',q:'«مررتُ بالفتى». ما علامة جر «الفتى»؟',ctx:'الألف لا تقبل ظهور الحركات.',a:['الكسرة الظاهرة','الكسرة المقدّرة على الألف للتعذّر','الياء','الفتحة المقدّرة'],c:1,e:'الفتى اسم مجرور بالباء، وعلامة جره الكسرة المقدّرة على الألف للتعذّر.'},
+{type:'parse',q:'«إنّ القاضيَ عادلٌ». ما إعراب «القاضيَ»؟',ctx:'اسم إنّ منصوب، والاسم المنقوص قد تظهر عليه الفتحة.',a:['اسم إنّ منصوب بالفتحة الظاهرة','فاعل مرفوع بالضمة المقدرة','مفعول به منصوب بالفتحة المقدرة','خبر إنّ مرفوع'],c:0,e:'القاضي اسم إنّ منصوب، وعلامة نصبه الفتحة الظاهرة على الياء.'},
+{type:'parse',q:'«سلّمتُ على راعٍ». ما إعراب «راعٍ»؟',ctx:'الاسم المنقوص النكرة إذا جُرّ تُحذف ياؤه ويُعوّض عنها بتنوين كسر.',a:['اسم مجرور بالكسرة الظاهرة على الياء','اسم مجرور بالكسرة المقدّرة، وحذفت ياؤه لأنه نكرة','مفعول به منصوب','فاعل مرفوع'],c:1,e:'راعٍ اسم مجرور بـ«على»، وعلامة جره الكسرة المقدّرة على الياء المحذوفة، والتنوين عوض عن الياء.'},
+{type:'parse',q:'«هذه صحراءُ واسعةٌ». ما إعراب «صحراءُ»؟',ctx:'تأمل موقع الكلمة في الجملة.',a:['خبر مرفوع','مبتدأ مرفوع بالضمة الظاهرة','اسم إشارة','مفعول به منصوب'],c:1,e:'صحراء مبتدأ مرفوع بالضمة الظاهرة، وهو اسم ممدود.'},
+{type:'parse',q:'«الهدى نورٌ». ما إعراب «الهدى»؟',ctx:'الكلمة التي نخبر عنها هي المبتدأ.',a:['مبتدأ مرفوع بالضمة المقدّرة على الألف للتعذّر','خبر مرفوع بالضمة الظاهرة','فاعل منصوب','اسم مجرور'],c:0,e:'الهدى مبتدأ مرفوع، وعلامة رفعه الضمة المقدّرة على الألف للتعذّر.'},
+{type:'mix',q:'أيّ جملة تحتوي اسمًا مقصورًا؟',ctx:'اختر الجملة التي تضم اسمًا معربًا آخره ألف لازمة.',a:['جاء الداعي مبكرًا.','هذه صحراء واسعة.','رأيتُ الفتى في المكتبة.','حضر معلم نشيط.'],c:2,e:'الفتى اسم مقصور. الداعي منقوص، والصحراء ممدود.'},
+{type:'mix',q:'أيّ عبارة صحيحة؟',ctx:'اختر التعريف الدقيق.',a:['المقصور ينتهي بياء لازمة.','المنقوص ينتهي بألف لازمة.','الممدود ينتهي بهمزة قبلها ألف زائدة.','كل كلمة آخرها ألف مقصورة اسم مقصور بالضرورة.'],c:2,e:'الممدود اسم معرب آخره همزة قبلها ألف زائدة. ويجب تحقق شروط التعريف في بقية الأنواع أيضًا.'},
+{type:'mix',q:'ما الكلمة التي لا تُعدّ اسمًا منقوصًا؟',ctx:'الاسم المنقوص آخره ياء لازمة مكسور ما قبلها.',a:['القاضي','الداعي','الراعي','العصا'],c:3,e:'العصا اسم مقصور، أما القاضي والداعي والراعي فأسماء منقوصة.'},
+{type:'mix',q:'«وصلتُ إلى بناءٍ جديد». ما نوع «بناء»؟',ctx:'تأمل نهاية الاسم.',a:['مقصور','ممدود','منقوص','ليس من هذه الأنواع'],c:1,e:'بناء اسم ممدود؛ آخره همزة قبلها ألف زائدة.'},
+{type:'mix',q:'اختر الإعراب الصحيح في «رأيتُ الفتى».',ctx:'حدّد موقع «الفتى» وعلامة نصبه.',a:['فاعل مرفوع بالضمة','مفعول به منصوب بالفتحة المقدّرة على الألف','اسم مجرور بالكسرة','مبتدأ مرفوع'],c:1,e:'الفتى مفعول به منصوب، وعلامة نصبه الفتحة المقدّرة على الألف للتعذّر.'}
+];
+let mode='mix', questions=[], idx=0, score=0, answered=false, history=[];
+const $=id=>document.getElementById(id);
+const modeNames={mix:'التحدّي الشامل',classify:'صيّاد الكلمات',extract:'محقّق الجمل',parse:'خبير الإعراب'};
+document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.mode').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');mode=b.dataset.mode;
+}));
+function start(){
+ const filtered=bank.filter(x=>mode==='mix'?true:x.type===mode);
+ questions=filtered.sort(()=>Math.random()-.5).slice(0,Math.min(10,filtered.length));
+ idx=0;score=0;history=[]; $('start').classList.add('hidden');$('finish').classList.add('hidden');$('game').classList.remove('hidden');$('modeLabel').textContent=modeNames[mode];render();
+}
+function render(){
+ answered=false;const q=questions[idx];$('counter').textContent=`السؤال ${idx+1}/${questions.length}`;$('score').textContent=`⭐ النقاط: ${score}`;$('bar').style.width=(idx/questions.length*100)+'%';$('question').textContent=q.q;$('context').textContent=q.ctx||'اختر الإجابة الصحيحة.';$('feedback').className='feedback hidden';$('feedback').textContent='';$('next').classList.add('hidden');$('tip').textContent='اختر إجابة واحدة فقط.';
+ $('answers').innerHTML='';q.a.forEach((ans,i)=>{let b=document.createElement('button');b.className='answer';b.textContent=String.fromCharCode(0x0661+i)+'. '+ans;b.addEventListener('click',()=>choose(i));$('answers').appendChild(b)});
+}
+function choose(n){
+ if(answered)return;answered=true;const q=questions[idx],ok=n===q.c; if(ok)score++;history.push({q:q.q,chosen:q.a[n],correct:q.a[q.c],ok,explain:q.e});
+ [...$('answers').children].forEach((b,i)=>{b.disabled=true;if(i===q.c)b.classList.add('correct');else if(i===n)b.classList.add('wrong')});
+ $('score').textContent=`⭐ النقاط: ${score}`;$('bar').style.width=((idx+1)/questions.length*100)+'%';$('feedback').className='feedback '+(ok?'good':'bad');$('feedback').textContent=(ok?'أحسنت! إجابة صحيحة. ':'ليست الإجابة الصحيحة. ')+q.e;$('next').classList.remove('hidden');$('next').textContent=idx===questions.length-1?'عرض النتيجة 🏆':'السؤال التالي ←';$('tip').textContent=ok?'واصل التقدّم!':'تعلّم من التصحيح ثم تابع.';
+}
+$('begin').addEventListener('click',start);
+$('next').addEventListener('click',()=>{if(idx<questions.length-1){idx++;render()}else finish()});
+function finish(){
+ $('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finalScore').textContent=`${$('student').value.trim()? 'أحسنت يا '+$('student').value.trim()+'! ':'نتيجتك: '}${score} من ${questions.length}`;
+ let pct=score/questions.length;$('message').textContent=pct>=.8?'ممتاز! تميّزك واضح. راجع التفسيرات لتثبيت القواعد.':pct>=.5?'أداء جيد! راجع التعريفات وعلامات الإعراب ثم أعد اللعب.':'لا بأس، التدرّب يصنع الفرق. اقرأ التذكير ثم جرّب مرة أخرى.';
+ $('reviewBox').classList.add('hidden');$('reviewBox').innerHTML='';
+}
+$('review').addEventListener('click',()=>{let box=$('reviewBox');box.classList.toggle('hidden');box.innerHTML='<h2>مراجعة الإجابات</h2>'+history.map((h,i)=>`<div style="padding:12px 0;border-bottom:1px solid #dce6f2"><strong>${i+1}. ${h.q}</strong><p style="color:${h.ok?'#197b58':'#b84242'}">إجابتك: ${h.chosen}</p><p><strong>الإجابة الصحيحة:</strong> ${h.correct}</p><p class="hint">${h.explain}</p></div>`).join('')});
+$('again').addEventListener('click',()=>{$('start').classList.remove('hidden');$('finish').classList.add('hidden');$('game').classList.add('hidden')});
+</script>
+</body>
+</html>

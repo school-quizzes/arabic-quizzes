@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>تحدّي الأسماء الخمسة</title>
+<style>
+:root{--ink:#172033;--muted:#64748b;--paper:#f5f7fb;--card:#fff;--accent:#7a4bb4;--line:#dce3ef;--good:#137547;--bad:#b42318}
+*{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.65}
+main{max-width:900px;margin:auto;padding:18px} header{background:linear-gradient(135deg,var(--accent),#25365f);color:white;padding:24px;border-radius:22px;margin-bottom:16px}
+h1{margin:0 0 4px;font-size:clamp(24px,4vw,34px)} header p{margin:0;opacity:.94}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0} .pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-weight:bold}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin:14px 0;box-shadow:0 6px 22px #1720330a}
+.progress{height:8px;background:#e6ebf4;border-radius:99px;overflow:hidden;margin:12px 0 18px} .bar{height:100%;background:var(--accent);width:0%;transition:width .2s}
+.qtop{color:var(--muted);font-size:14px;font-weight:bold} .prompt{font-size:clamp(19px,3vw,24px);font-weight:bold;margin:8px 0 14px}
+.options{display:grid;grid-template-columns:1fr;gap:10px} .opt{border:1px solid var(--line);background:white;border-radius:13px;padding:13px 15px;text-align:right;font:inherit;font-size:17px;cursor:pointer;color:var(--ink)} .opt:hover{border-color:var(--accent);background:#f8faff} .opt:disabled{cursor:default} .opt.correct{border-color:var(--good);background:#eaf8f0} .opt.wrong{border-color:var(--bad);background:#fff0ef}
+.feedback{margin-top:13px;padding:12px 14px;border-radius:12px;display:none} .feedback.show{display:block} .feedback.good{background:#eaf8f0;color:#105b37} .feedback.bad{background:#fff0ef;color:#8f1d15}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px} .primary,.secondary{border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:bold;cursor:pointer} .primary{background:var(--accent);color:#fff} .secondary{background:#e9eef7;color:var(--ink)} button:focus-visible{outline:3px solid #f6bd4b;outline-offset:2px}
+.hidden{display:none} .result{text-align:center} .score{font-size:46px;font-weight:bold;color:var(--accent)} .note{color:var(--muted);font-size:14px} .tag{display:inline-block;background:#edf2ff;color:#273f7a;padding:3px 9px;border-radius:99px;font-size:13px;margin-inline-start:5px}
+@media(min-width:650px){.options.two{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>تحدّي الأسماء الخمسة</h1><p>لعبة تفاعلية في الاستخراج والشروط والإعراب — الصف الثامن</p></header>
+<div class="stats"><span class="pill">🎯 الأسئلة: <span id="total"></span></span><span class="pill">⭐ النقاط: <span id="score">0</span></span><span class="pill">🧩 السؤال: <span id="count">1</span></span></div>
+<section id="intro" class="card">
+<h2>🎮 طريقة اللعب</h2><p>ميّزي الأسماء الخمسة: أبو، أخو، حمو، فو، ذو. افحصي شروط الإضافة، والإفراد، وعدم التصغير، وألا تُضاف إلى ياء المتكلم، ثم اختاري الإعراب الصحيح.</p>
+<p>اختاري إجابة واحدة لكل سؤال. ستحصلين على تغذية راجعة مباشرة، وفي النهاية ستظهر نتيجتك.</p>
+<button class="primary" id="start">ابدئي اللعب</button>
+</section>
+<section id="game" class="card hidden">
+<div class="qtop" id="kind"></div><div class="progress"><div class="bar" id="bar"></div></div>
+<div class="prompt" id="prompt"></div><div id="options" class="options"></div>
+<div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+<div class="controls"><button class="primary" id="next" disabled>السؤال التالي ←</button><button class="secondary" id="skip">تجاوز السؤال</button></div>
+</section>
+<section id="result" class="card result hidden">
+<h2>🏆 انتهت اللعبة!</h2><div class="score" id="finalScore"></div><p id="message"></p>
+<p id="review" class="note"></p><div class="controls" style="justify-content:center"><button class="primary" id="again">العب مرة أخرى</button><button class="secondary" id="print">طباعة النتيجة</button></div>
+</section>
+<p class="note">ملف تفاعلي يعمل في المتصفح دون الحاجة إلى تسجيل دخول. إذا كان جهاز المدرسة يمنع تشغيل ملفات HTML، افتحيه من تطبيق الملفات/المتصفح أو ارفعيه إلى مساحة تعليمية تسمح بفتح صفحات HTML.</p>
+</main>
+<script>
+const questions = [{"kind": "استخراج الأسماء الخمسة", "prompt": "في «أبوكَ كريمٌ»، استخرجي الاسم من الأسماء الخمسة.", "options": ["كريم", "أبوك", "لا يوجد", "الكاف"], "answer": 1, "explain": "أبوك من الأسماء الخمسة، وهو مضاف إلى الكاف."}, {"kind": "شروط الأسماء الخمسة", "prompt": "هل كلمة «أبي» في «أبي معلّمٌ» من الأسماء الخمسة المعربة بالحروف؟", "options": ["نعم، مرفوعة بالواو", "نعم، منصوبة بالألف", "لا؛ لأنها أضيفت إلى ياء المتكلم", "لا؛ لأنها مثنّى"], "answer": 2, "explain": "إذا أضيف الاسم إلى ياء المتكلم، يُعرب بحركات مقدرة/مناسبة، ولا يُعرب إعراب الأسماء الخمسة بالحروف."}, {"kind": "الإعراب", "prompt": "في «إنَّ أخاكَ صادقٌ»، ما إعراب «أخاك»؟", "options": ["اسم إن منصوب بالألف لأنه من الأسماء الخمسة", "اسم إن منصوب بالفتحة", "فاعل مرفوع بالواو", "مبتدأ مرفوع بالضمة"], "answer": 0, "explain": "أخاك اسم إن منصوب، وعلامة نصبه الألف لأنه من الأسماء الخمسة، وهو مضاف والكاف مضاف إليه."}, {"kind": "الشروط", "prompt": "في «جاء أخٌ صغيرٌ»، هل «أخ» من الأسماء الخمسة المعربة بالحروف؟", "options": ["نعم؛ لأنه مفرد", "نعم؛ لأنه مرفوع", "لا؛ لأنه غير مضاف", "لا؛ لأنه مضاف إلى ياء المتكلم"], "answer": 2, "explain": "من شروط إعراب الأسماء الخمسة بالحروف أن تكون مضافة."}, {"kind": "الإعراب", "prompt": "في «مررتُ بذي خُلُقٍ»، ما إعراب «ذي»؟", "options": ["اسم مجرور بالياء لأنه من الأسماء الخمسة", "اسم مجرور بالكسرة", "مفعول به منصوب بالألف", "فاعل مرفوع بالواو"], "answer": 0, "explain": "ذي اسم مجرور بالباء، وعلامة جره الياء؛ لأنه من الأسماء الخمسة، وذو هنا بمعنى صاحب."}, {"kind": "تمييز الشروط", "prompt": "أيّ جملة استُخدم فيها «فو» استخدامًا صحيحًا من الأسماء الخمسة؟", "options": ["هذا فمُكَ نظيفٌ", "هذا فوكَ نظيفٌ", "هذا فاهُ نظيفٌ", "هذا فمٌ نظيفٌ"], "answer": 1, "explain": "يشترط في «فو» أن تُحذف الميم من «فم» عند استعمالها من الأسماء الخمسة، مثل فوك."}, {"kind": "الإعراب", "prompt": "في «كان أبوكَ حاضرًا»، ما إعراب «أبوك»؟", "options": ["اسم كان مرفوع بالواو لأنه من الأسماء الخمسة", "خبر كان منصوب بالألف", "اسم كان مرفوع بالضمة", "فاعل مرفوع بالواو"], "answer": 0, "explain": "أبوك اسم كان مرفوع، وعلامة رفعه الواو لأنه من الأسماء الخمسة."}, {"kind": "تمييز الشروط", "prompt": "أيّ كلمة لا تُعرب إعراب الأسماء الخمسة بالحروف في المثال؟", "options": ["أخوك في «حضر أخوك»", "ذا في «رأيتُ ذا علمٍ»", "أبي في «جاء أبي»", "فوك في «فوك نظيف»"], "answer": 2, "explain": "أبي مضاف إلى ياء المتكلم، فلا يعرب بالحروف إعراب الأسماء الخمسة."}, {"kind": "الإعراب", "prompt": "في «رأيتُ حماكَ»، ما إعراب «حماك»؟", "options": ["مفعول به منصوب بالألف لأنه من الأسماء الخمسة", "فاعل مرفوع بالواو", "مفعول به منصوب بالفتحة", "اسم مجرور بالياء"], "answer": 0, "explain": "حماك مفعول به منصوب بالألف لأنه من الأسماء الخمسة، وهو مضاف والكاف مضاف إليه."}, {"kind": "تمييز الشروط", "prompt": "أيّ عبارة صحيحة عن «ذو» في الأسماء الخمسة؟", "options": ["تأتي بمعنى صاحب وتكون مضافة", "تأتي بمعنى الذي دائمًا", "تُعرب بالحركات مهما كان موقعها", "لا تُضاف إلى اسم بعدها"], "answer": 0, "explain": "«ذو» من الأسماء الخمسة إذا كانت بمعنى صاحب وكانت مضافة."}, {"kind": "تمييز الشروط", "prompt": "في «هذا أُبَيٌّ لطيفٌ»، هل «أُبَيّ» من الأسماء الخمسة المعربة بالحروف؟", "options": ["نعم، مرفوع بالواو", "لا؛ لأنه مصغّر", "نعم، منصوب بالألف", "لا؛ لأنه جمع"], "answer": 1, "explain": "يشترط أن تكون الأسماء الخمسة غير مصغّرة."}, {"kind": "الإعراب", "prompt": "في «سلّمتُ على أخيكَ»، ما علامة جر «أخيك»؟", "options": ["الكسرة", "الياء لأنه من الأسماء الخمسة", "الألف", "الفتحة"], "answer": 1, "explain": "أخيك اسم مجرور بعلى، وعلامة جره الياء لأنه من الأسماء الخمسة."}];
+let order=[], index=0, score=0, answered=false, correctCount=0;
+const $=id=>document.getElementById(id);
+$("total").textContent=questions.length;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function begin(){order=shuffle(questions.map((_,i)=>i));index=0;score=0;correctCount=0;$("score").textContent=0;$("intro").classList.add("hidden");$("result").classList.add("hidden");$("game").classList.remove("hidden");showQ()}
+function showQ(){answered=false;const q=questions[order[index]];$("count").textContent=index+1;$("kind").textContent=q.kind;$("prompt").textContent=q.prompt;$("bar").style.width=(index/questions.length*100)+"%";$("feedback").className="feedback";$("feedback").textContent="";$("next").disabled=true;$("next").textContent=index===questions.length-1?"عرض النتيجة 🏁":"السؤال التالي ←";$("options").innerHTML="";q.options.forEach((op,i)=>{const b=document.createElement("button");b.className="opt";b.textContent=op;b.onclick=()=>choose(i,b);$("options").appendChild(b)})}
+function choose(i,btn){if(answered)return;answered=true;const q=questions[order[index]];const buttons=[...$("options").children];buttons.forEach(b=>b.disabled=true);buttons[q.answer].classList.add("correct");const fb=$("feedback");fb.classList.add("show");if(i===q.answer){score+=10;correctCount++;$("score").textContent=score;fb.classList.add("good");fb.textContent="أحسنتِ! إجابة صحيحة. "+q.explain}else{btn.classList.add("wrong");fb.classList.add("bad");fb.textContent="ليست الإجابة الصحيحة. "+q.explain}$("next").disabled=false}
+function next(){if(index<questions.length-1){index++;showQ()}else finish()}
+function skip(){if(!answered){answered=true;$("options").querySelectorAll("button").forEach(b=>b.disabled=true);$("feedback").className="feedback show bad";$("feedback").textContent="تجاوزتِ السؤال. "+questions[order[index]].explain;$("next").disabled=false}}
+function finish(){$("game").classList.add("hidden");$("result").classList.remove("hidden");$("bar").style.width="100%";$("finalScore").textContent=score+" / "+(questions.length*10);let pct=correctCount/questions.length; $("message").textContent=pct>=.85?"ممتاز! إتقان رائع.":pct>=.6?"عمل جيد! راجعي الأسئلة التي أخطأتِ فيها.":"لا بأس، أعيدي اللعب وركّزي على القاعدة."; $("review").textContent="عدد الإجابات الصحيحة: "+correctCount+" من "+questions.length+"."}
+$("start").onclick=begin;$("next").onclick=next;$("skip").onclick=skip;$("again").onclick=begin;$("print").onclick=()=>window.print();
+</script>
+</body></html>
